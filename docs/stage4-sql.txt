@@ -1,0 +1,10 @@
+Stage 4 - SQL query run by hand
+
+Query:
+SELECT COUNT(*) FROM tasks;
+
+Result:
+3
+
+What it returned:
+It returned 3 because the clean database contained the three seeded tasks.

@@ -94,6 +94,14 @@ def find_task(task_id: int):
     return next((task for task in tasks if task["id"] == task_id), None)
 
 
+def row_to_task(row: sqlite3.Row) -> dict:
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "done": bool(row["done"]),
+    }
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_error_handler(request: Request, exc: RequestValidationError):
     first_error = exc.errors()[0]
@@ -113,18 +121,26 @@ def health_check():
 
 @app.get("/tasks", response_model=list[Task], summary="List all tasks", tags=["Tasks"])
 def list_tasks():
-    return tasks
+    with get_connection() as connection:
+        rows = connection.execute(
+            "SELECT id, title, done FROM tasks ORDER BY id"
+        ).fetchall()
+    return [row_to_task(row) for row in rows]
 
 
 @app.get("/tasks/{task_id}", response_model=Task, summary="Get one task", tags=["Tasks"])
 def get_task(task_id: int):
-    task = find_task(task_id)
-    if task is None:
+    with get_connection() as connection:
+        row = connection.execute(
+            "SELECT id, title, done FROM tasks WHERE id = ?",
+            (task_id,),
+        ).fetchone()
+    if row is None:
         return JSONResponse(
             status_code=404,
-            content={"error": f"Task {task_id} not found"},
+            content={"error": "Task not found"},
         )
-    return task
+    return row_to_task(row)
 
 
 @app.post(

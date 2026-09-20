@@ -1,3 +1,6 @@
+import sqlite3
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
@@ -7,9 +10,46 @@ from pydantic import BaseModel, ConfigDict, StrictBool, field_validator
 
 app = FastAPI(
     title="Task API",
-    version="1.0.0",
-    description="A beginner-friendly in-memory CRUD API for managing tasks.",
+    version="2.0.0",
+    description="A beginner-friendly SQLite CRUD API for managing tasks.",
 )
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DB_PATH = PROJECT_ROOT / "tasks.db"
+SEED_TASKS = (
+    ("Read the assignment", 1),
+    ("Connect the API to SQLite", 0),
+    ("Test database persistence", 0),
+)
+
+
+def get_connection() -> sqlite3.Connection:
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def initialize_database() -> None:
+    with get_connection() as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                done INTEGER NOT NULL DEFAULT 0
+            )
+            """
+        )
+        count = connection.execute("SELECT COUNT(*) FROM tasks").fetchone()[0]
+        if count == 0:
+            connection.executemany(
+                "INSERT INTO tasks (title, done) VALUES (?, ?)",
+                SEED_TASKS,
+            )
+
+
+initialize_database()
 
 
 class Task(BaseModel):

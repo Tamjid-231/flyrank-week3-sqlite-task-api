@@ -151,10 +151,16 @@ def get_task(task_id: int):
     tags=["Tasks"],
 )
 def create_task(task_data: TaskCreate):
-    next_id = max((task["id"] for task in tasks), default=0) + 1
-    new_task = {"id": next_id, "title": task_data.title, "done": False}
-    tasks.append(new_task)
-    return new_task
+    with get_connection() as connection:
+        cursor = connection.execute(
+            "INSERT INTO tasks (title, done) VALUES (?, ?)",
+            (task_data.title, 0),
+        )
+        row = connection.execute(
+            "SELECT id, title, done FROM tasks WHERE id = ?",
+            (cursor.lastrowid,),
+        ).fetchone()
+    return row_to_task(row)
 
 
 @app.put("/tasks/{task_id}", response_model=Task, summary="Update a task", tags=["Tasks"])

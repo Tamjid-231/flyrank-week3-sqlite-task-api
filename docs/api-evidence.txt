@@ -1,0 +1,29 @@
+Week 3 CRUD API - curl evidence
+Tested locally on 20 September 2026
+
+GET /tasks
+HTTP/1.1 200 OK
+content-type: application/json
+
+[{"id":1,"title":"Read the assignment","done":true},{"id":2,"title":"Connect the API to SQLite","done":false},{"id":3,"title":"Test database persistence","done":false}]
+
+POST /tasks with {"title":"Persistence check"}
+HTTP/1.1 201 Created
+content-type: application/json
+
+{"id":4,"title":"Persistence check","done":false}
+
+PUT /tasks/4 with {"title":"Persistence check complete","done":true}
+HTTP/1.1 200 OK
+content-type: application/json
+
+{"id":4,"title":"Persistence check complete","done":true}
+
+DELETE /tasks/4
+HTTP/1.1 204 No Content
+
+GET /tasks/999
+HTTP/1.1 404 Not Found
+content-type: application/json
+
+{"error":"Task not found"}

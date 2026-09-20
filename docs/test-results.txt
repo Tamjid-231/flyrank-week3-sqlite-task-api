@@ -1,0 +1,7 @@
+Command:
+python -m pytest -q
+
+Result:
+19 passed, 8 dependency deprecation warnings
+
+The warnings come from FastAPI/Starlette compatibility notices under Python 3.14, not from the application code.

@@ -100,7 +100,7 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
 
 @app.get("/", summary="Describe the API", tags=["System"])
 def api_information():
-    return {"name": "Task API", "version": "1.0", "endpoints": ["/tasks"]}
+    return {"name": "Task API", "version": "2.0", "endpoints": ["/tasks"]}
 
 
 @app.get("/health", summary="Check server health", tags=["System"])

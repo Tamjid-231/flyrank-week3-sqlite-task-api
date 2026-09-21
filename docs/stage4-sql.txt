@@ -1,10 +1,23 @@
-Stage 4 - SQL query run by hand
+Stage 4 - SQL queries run in the SQLite browser
 
-Query:
-SELECT COUNT(*) FROM tasks;
+These queries were run through the browser Query tab against a disposable copy
+of tasks.db. The submitted database was left unchanged for the final screenshot.
 
-Result:
-3
+1. SELECT * FROM tasks;
+   Result: 3 rows - the three seeded tasks.
 
-What it returned:
-It returned 3 because the clean database contained the three seeded tasks.
+2. SELECT * FROM tasks WHERE done = 1;
+   Result: 1 row - "Read the assignment".
+
+3. SELECT COUNT(*) FROM tasks;
+   Result: 3.
+
+4. UPDATE tasks SET done = 1;
+   Result: 3 rows modified.
+
+5. DELETE FROM tasks WHERE done = 1;
+   Result: 3 rows modified; the disposable copy was empty afterward.
+
+README example:
+SELECT COUNT(*) FROM tasks; returned 3 because the clean database contained
+the three seeded tasks.

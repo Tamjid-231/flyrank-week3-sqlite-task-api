@@ -1,5 +1,5 @@
 Week 3 CRUD API - curl evidence
-Tested locally on 20 September 2026
+Tested locally on 20-21 September 2026
 
 GET /tasks
 HTTP/1.1 200 OK
@@ -12,6 +12,21 @@ HTTP/1.1 201 Created
 content-type: application/json
 
 {"id":4,"title":"Persistence check","done":false}
+
+SEPARATE CLEAN-CLONE RESTART CHECK
+POST /tasks with {"title":"Restart proof"}
+HTTP/1.1 201 Created
+content-type: application/json
+
+{"id":4,"title":"Restart proof","done":false}
+
+The server was then stopped and started again.
+
+GET /tasks/4 after restart
+HTTP/1.1 200 OK
+content-type: application/json
+
+{"id":4,"title":"Restart proof","done":false}
 
 PUT /tasks/4 with {"title":"Persistence check complete","done":true}
 HTTP/1.1 200 OK

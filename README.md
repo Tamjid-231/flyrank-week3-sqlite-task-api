@@ -126,6 +126,8 @@ I created a task with `POST /tasks`, closed the connection, and opened the same 
 
 The initialization tests also start the same database three times and confirm that the seed count remains three.
 
+I also verified a real restart from a clean copy of the repository: I created a task named `Restart proof`, stopped Uvicorn, started it again, and `GET /tasks/4` returned `200 OK` with the same saved task.
+
 I also ran the complete CRUD cycle with `curl -i`. The real HTTP status lines and JSON responses are saved in [`docs/api-evidence.txt`](docs/api-evidence.txt).
 
 ## Stage 4 SQL query
@@ -138,9 +140,11 @@ SELECT COUNT(*) FROM tasks;
 
 It returned `3` because the clean database contained the three seeded tasks. The recorded query and result are saved in [`docs/stage4-sql.txt`](docs/stage4-sql.txt).
 
+I ran all five Stage 4 queries in the browser query tab against a disposable copy of `tasks.db`. The copy was used so the submitted database evidence could still show the original three seed rows.
+
 ## Database inspection
 
-The image below was generated from an actual inspection of the submitted `tasks.db`. It shows the table structure and the same three rows returned by `GET /tasks`.
+I opened the actual `tasks.db` file in a read-only SQLite database browser and captured its live **Content** view. It shows the same three rows returned by `GET /tasks`.
 
 ![SQLite tasks table](docs/database-content.png)
 
@@ -154,6 +158,8 @@ Install the development packages and run the complete test suite:
 ```
 
 The final run completed with all 19 tests passing. The suite checks automatic creation, seed protection, all CRUD endpoints, persistence, validation, status codes, JSON errors, parameterized title handling, OpenAPI responses, and the empty `204` delete response.
+
+The same endpoint, status-code, validation, and JSON-shape checks that worked for the in-memory API also pass with SQLite. That proves the database is an implementation detail: clients use the same API contract even though the storage layer changed.
 
 ## Clean-clone behaviour
 
